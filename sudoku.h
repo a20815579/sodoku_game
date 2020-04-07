@@ -38,12 +38,13 @@ private:
     bool isNineNumDiff(vector<int> be_checked);
     bool isValid();
     bool isMultiAns();
+    
+    int try_cand(int try_time);
+    int try_fill(int x, int y, int num, int try_time);
 	    
 	vector<vector<int> > map;
-	vector<int> cand[9][9];  //candidate number
+	vector<int> cand[9][9];
 	int zero_cnt;
-	//int is_no_ans = 0;
-	//int try_map[9][9];
 };
 
 #endif // SUDOKU_H

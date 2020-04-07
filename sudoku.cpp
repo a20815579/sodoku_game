@@ -367,6 +367,111 @@ bool Sudoku::fillBlock() {
 	return true;
 }
 
+int Sudoku::try_cand(int try_time) {
+	try_time++;
+	vector<vector<int> > temp_map = map;
+	vector<int> temp_cand[9][9];
+	for(int i = 0; i < 9; i++) {
+		for(int j = 0; j < 9; j++) {
+			temp_cand[i][j] = cand[i][j];
+		}
+	}
+	int temp_zero_cnt = zero_cnt;
+	int x, y, cand1, cand2;
+	bool find_try = false;
+	int cand1_correct, cand2_correct;
+	for(int i = 0; i < 9; i++) {
+		for(int j = 0; j < 9; j++) {
+			if(cand[i][j].size() == 2) {
+				x = i;
+				y = j;
+				cand1 = cand[i][j][0];
+				cand2 = cand[i][j][1];
+				find_try = true;
+				break;
+			} 
+		}
+		if(find_try) {
+			break;
+		}
+	}
+	cand1_correct = try_fill(x, y, cand1, try_time);
+	if(cand1_correct == 1) {
+		return 1;
+	}
+	else {
+		map = temp_map;
+		for(int i = 0; i < 9; i++) {
+			for(int j = 0; j < 9; j++) {
+				cand[i][j] = temp_cand[i][j];
+			}
+		}
+		zero_cnt = temp_zero_cnt;
+		if(try_time == 1) {
+			map[x][y] = cand2;
+			cand[x][y].clear();
+			zero_cnt--;
+			eraseSame(x, y, cand2);
+			return 0;
+		}
+		else {
+			cand2_correct = try_fill(x, y, cand2, try_time);
+			if(cand2_correct)
+				return 1;
+			else {
+				map = temp_map;
+				for(int i = 0; i < 9; i++) {
+					for(int j = 0; j < 9; j++) {
+						cand[i][j] = temp_cand[i][j];
+					}
+				}
+				zero_cnt = temp_zero_cnt;
+				return 0;
+			}
+		}
+	}
+}
+
+int Sudoku::try_fill(int x, int y, int num, int try_time) {
+	map[x][y] = num;
+	cand[x][y].clear();
+	zero_cnt--;
+	eraseSame(x, y, num);
+	if(!fillRow(x)) { return 0;	}
+	if(!fillCol(y)) { return 0;	}
+	if(!fillSubGrid(x, y)) { return 0; }
+	if(!fillBlock()) { return 0; }
+	int old_zero_cnt = zero_cnt;
+	while(zero_cnt) {
+		for(int i = 0; i < 9; i++) {
+			if(!fillRow(i))
+				return 0;
+		}
+		for(int i = 0; i < 9; i++) {
+			if(!fillCol(i)) 
+				return 0; 
+		}
+		for(int i = 0; i < 3; i++) {
+			for(int j = 0; j < 3; j++) {
+				if(!fillSubGrid(i, j)) 
+					return 0; 
+			}
+		}
+		if(!fillBlock()) 
+			return 0; 
+
+		if(zero_cnt == 0) {
+			return 1;
+		}
+		else if(zero_cnt == old_zero_cnt) {
+			return try_cand(try_time);
+		}
+		else {
+			old_zero_cnt = zero_cnt;
+		}
+	}
+}
+
 bool Sudoku::isNineNumDiff(vector<int> be_checked) {
 	int appear_time[9] = {0};
 	for(int i = 0; i < 9; i++) {
@@ -445,7 +550,8 @@ int Sudoku::solve() {
 	}
 
 	int old_zero_cnt = zero_cnt;
-	int loop_cnt = 0;
+	//int loop_cnt = 0, loop_not_fill = 0;
+	int try_fill_result;
 	while(zero_cnt) {
 		for(int i = 0; i < 9; i++) {
 			if(!fillRow(i))
@@ -468,11 +574,22 @@ int Sudoku::solve() {
 			return 1;
 		}
 		else if(zero_cnt == old_zero_cnt) {
-			return 2;
+			/*
+			loop_not_fill++;
+			if(loop_not_fill == 2) {
+				return 2;
+			}
+			*/
+			try_fill_result = try_cand(0);
+			if(try_fill_result == 1)
+				return 1;
+			else
+				continue;
 		}
 		else {
 			old_zero_cnt = zero_cnt;
 			//loop_cnt++;
+			//loop_not_fill = 0;
 			//cout << loop_cnt << " ";
 		}
 	} 
