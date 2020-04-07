@@ -1,6 +1,12 @@
+#include<iostream>
+#include<vector>
+#include "sudoku.h"
+using namespace std;
+
 int main()
 {
-    // finish your generate code...
-
+	Sudoku su;
+	su.generate();
+	su.printMap();
     return 0;
 }
