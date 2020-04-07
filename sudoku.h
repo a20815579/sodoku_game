@@ -41,6 +41,8 @@ private:
     
     int try_cand(int try_time);
     int try_fill(int x, int y, int num, int try_time);
+    int try_recursive(vector<vector<int> > temp_map, 
+	vector<int> temp_cand[9][9], int temp_zero_cnt);
 	    
 	vector<vector<int> > map;
 	vector<int> cand[9][9];

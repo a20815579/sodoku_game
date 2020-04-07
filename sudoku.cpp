@@ -472,6 +472,103 @@ int Sudoku::try_fill(int x, int y, int num, int try_time) {
 	}
 }
 
+int Sudoku::try_recursive(vector<vector<int> > temp_map, 
+	vector<int> temp_cand[9][9], int temp_zero_cnt) {
+	int x, y, result;
+	bool find_zero = false;
+	vector<int> temp_this_cand;
+	vector<int> temp2_cand[9][9];
+	for(int i = 0; i < 9; i++) {
+		for(int j = 0; j < 9; j++) {
+			temp2_cand[i][j] = temp_cand[i][j];
+		}
+	}
+	for(int i = 0; i < 9; i++) {
+		for(int j = 0; j < 9; j++) {
+			if(temp_map[i][j] == 0) {
+				x = i;
+				y = j;
+				temp_this_cand = temp_cand[i][j];				
+				find_zero = true;
+				break;
+			}			
+		}
+		if(find_zero)
+			break;
+	}
+	if(!find_zero) {
+		map = temp_map;
+		return 1;
+	}
+	if(temp_this_cand.size() == 0) {
+		//cout<<x<<" "<<y<<" size=0"<<endl;
+		return 0;
+	}
+	/*
+	cout<<"cand "<<2<<" "<<1<<" ";
+	for(int k = 0; k < temp_cand[0][4].size(); k++) {
+		cout << temp_cand[2][1][k] << " ";
+	}
+	cout<<endl;
+	*/
+	int num;
+	for(int k = 0; k < temp_this_cand.size(); k++) {		
+		num = temp_this_cand[k];
+		//cout<<x<<" "<<y<<" "<<num<<endl; 
+		temp_map[x][y] = num;
+		temp_cand[x][y].clear();
+		temp_zero_cnt--;
+		if(temp_zero_cnt == 0) {
+			map = temp_map;
+			return 1;
+		}			
+		//erase start
+		vector<int>::iterator it;
+		for(int i = 0; i < 9; i++) {
+			if(temp_map[x][i] == 0) {
+				it = find(temp_cand[x][i].begin(), temp_cand[x][i].end(), num);
+				if(it != temp_cand[x][i].end()) {
+					temp_cand[x][i].erase(it);
+				}			
+			}	
+		}
+		for(int i = 0; i < 9; i++) {
+			if(temp_map[i][y] == 0) {
+				it = find(temp_cand[i][y].begin(), temp_cand[i][y].end(), num);
+				if(it != temp_cand[i][y].end()) {
+					temp_cand[i][y].erase(it);
+				}	
+			}
+		}
+		int x_now, y_now; 
+		int x_base = x/3, y_base = y/3;
+		for(int i = 0; i < 3; i++) {
+			x_now = x_base*3 + i;
+			for(int j = 0; j < 3; j++) {
+				y_now = y_base*3 + j;
+				if(temp_map[x_now][y_now] == 0) {
+					it = find(temp_cand[x_now][y_now].begin(), temp_cand[x_now][y_now].end(), num);
+					if(it != temp_cand[x_now][y_now].end()) {
+						temp_cand[x_now][y_now].erase(it);
+					}					
+				}			
+			}
+		}
+		//erase end
+		result = try_recursive(temp_map, temp_cand, temp_zero_cnt);
+		if(result == 1) {
+			return 1;
+		}
+		for(int i = 0; i < 9; i++) {
+			for(int j = 0; j < 9; j++) {
+				temp_cand[i][j] = temp2_cand[i][j];
+			}
+		}
+		temp_zero_cnt++;
+	}
+	return 0;
+}
+
 bool Sudoku::isNineNumDiff(vector<int> be_checked) {
 	int appear_time[9] = {0};
 	for(int i = 0; i < 9; i++) {
@@ -574,17 +671,7 @@ int Sudoku::solve() {
 			return 1;
 		}
 		else if(zero_cnt == old_zero_cnt) {
-			/*
-			loop_not_fill++;
-			if(loop_not_fill == 2) {
-				return 2;
-			}
-			*/
-			try_fill_result = try_cand(0);
-			if(try_fill_result == 1)
-				return 1;
-			else
-				continue;
+			return try_recursive(map, cand, zero_cnt);
 		}
 		else {
 			old_zero_cnt = zero_cnt;
