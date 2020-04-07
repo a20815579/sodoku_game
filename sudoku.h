@@ -1,6 +1,8 @@
 #ifndef SUDOKU_H
 #define SUDOKU_H
-
+#include <iostream>
+#include <vector>
+using namespace std;
 class Sudoku
 {
 public:
