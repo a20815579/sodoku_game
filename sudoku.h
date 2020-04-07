@@ -3,11 +3,10 @@
 #include <iostream>
 #include <vector>
 using namespace std;
-class Sudoku
-{
-public:
+class Sudoku {
+  public:
     Sudoku();
-	Sudoku(vector<vector<int> > origin_map);
+    Sudoku(vector<vector<int> > origin_map);
     // generate
     void generate();
 
@@ -21,12 +20,12 @@ public:
     // solve
     int solve();
     void printMap();
-    
+
     void printdebug();
-    
+
     bool isCorrect();
-    
-private:
+
+  private:
     void build_candidate();
     void eraseSame(int x, int y, int num);
     void eraseSameRow(int x, vector<int> y, int num);
@@ -38,15 +37,15 @@ private:
     bool isNineNumDiff(vector<int> be_checked);
     bool isValid();
     bool isMultiAns();
-    
+
     int try_cand(int try_time);
     int try_fill(int x, int y, int num, int try_time);
-    int try_recursive(vector<vector<int> > temp_map, 
-	vector<int> temp_cand[9][9], int temp_zero_cnt);
-	    
-	vector<vector<int> > map;
-	vector<int> cand[9][9];
-	int zero_cnt;
+    int try_recursive(vector<vector<int> > temp_map,
+                      vector<int> temp_cand[9][9], int temp_zero_cnt);
+
+    vector<vector<int> > map;
+    vector<int> cand[9][9];
+    int zero_cnt;
 };
 
 #endif // SUDOKU_H

@@ -3,10 +3,9 @@
 #include "sudoku.h"
 using namespace std;
 
-int main()
-{
-	Sudoku su;
-	su.generate();
-	su.printMap();
+int main() {
+    Sudoku su;
+    su.generate();
+    su.printMap();
     return 0;
 }
