@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <cstdlib>
+#include <ctime>
 #include "sudoku.h"
 using namespace std;
 
@@ -28,7 +30,14 @@ void Sudoku::generate() {
             map[i][j] = origin_map[i][j];
         }
     }
-    swapNum(1,9);
+    srand(time(NULL));
+    int swaprow_a = rand() % 3, swaprow_b = rand() % 3;
+    swapRow(swaprow_a,swaprow_b);
+    int swapcol_a = rand() % 3, swapcol_b = rand() % 3;
+    swapNum(swapcol_a,swapcol_b);
+    int rotate_n = rand() % 4, flip_n = rand() % 2;
+    rotate(rotate_n);
+    flip(flip_n);
 }
 
 void Sudoku::swapNum(int x, int y) {
@@ -428,50 +437,6 @@ int Sudoku::try_recursive(vector<vector<int> > temp_map,
     return 0;
 }
 
-bool Sudoku::isNineNumDiff(vector<int> be_checked) {
-    int appear_time[9] = {0};
-    for(int i = 0; i < 9; i++) {
-        if(appear_time[i] != 0) {
-            appear_time[be_checked[i]-1]++;
-            if(appear_time[be_checked[i]-1] == 2)
-                return false;
-        }
-    }
-    return true;
-}
-
-bool Sudoku::isValid() {
-    //check row
-    for(int i = 0; i < 9; i++) {
-        if(!isNineNumDiff(map[i]))
-            return false;
-    }
-    //check colume
-    vector<int> be_checked_diff;
-    for(int i = 0; i < 9; i++) {
-        be_checked_diff = vector<int> (9,0);
-        for(int j = 0; j < 9; j++) {
-            be_checked_diff[j] = map[j][i];
-        }
-        if(!isNineNumDiff(be_checked_diff))
-            return false;
-    }
-    //check sub_grid
-    for(int i = 0; i < 3; i++) {
-        for(int j = 0; j < 3; j++) {
-            be_checked_diff = vector<int> (9,0);
-            for(int m = 0; m < 3; m++) {
-                for(int n = 0; n < 3; n++) {
-                    be_checked_diff[m*3+n] = map[i*3+m][j*3+n];
-                }
-            }
-            if(!isNineNumDiff(be_checked_diff))
-                return false;
-        }
-    }
-    return true;
-}
-
 bool Sudoku::isMultiAns() {
     zero_cnt = 0;
     for(int i = 0; i < 9; i++) {
@@ -489,8 +454,6 @@ bool Sudoku::isMultiAns() {
 }
 
 int Sudoku::solve() {
-    if(!isValid())
-        return 0;
     if(isMultiAns())
         return 2;
 
@@ -505,7 +468,6 @@ int Sudoku::solve() {
     }
 
     int old_zero_cnt = zero_cnt;
-    int try_fill_result;
     while(zero_cnt) {
         for(int i = 0; i < 9; i++) {
             if(!fillRow(i))
