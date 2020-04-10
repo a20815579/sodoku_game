@@ -9,21 +9,15 @@ class Sudoku {
     Sudoku(vector<vector<int> > origin_map);
     // generate
     void generate();
-
     // transform
     void swapNum(int x, int y);
     void swapRow(int x, int y);
     void swapCol(int x, int y);
     void rotate(int x);
     void flip(int x);
-
     // solve
     int solve();
     void printMap();
-
-    void printdebug();
-
-    bool isCorrect();
 
   private:
     void build_candidate();
@@ -37,9 +31,6 @@ class Sudoku {
     bool isNineNumDiff(vector<int> be_checked);
     bool isValid();
     bool isMultiAns();
-
-    int try_cand(int try_time);
-    int try_fill(int x, int y, int num, int try_time);
     int try_recursive(vector<vector<int> > temp_map,
                       vector<int> temp_cand[9][9], int temp_zero_cnt);
 

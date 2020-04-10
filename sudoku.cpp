@@ -176,18 +176,6 @@ void Sudoku::eraseSameCol(vector<int> x, int y, int num) {
     }
 }
 
-void Sudoku::printdebug() {
-    for(int i = 0; i < 3; i++) {
-        for(int j = 0; j < 9; j++) {
-            cout << i<< " "<<j;
-            for(int k = 0; k < cand[i][j].size(); k++) {
-                cout << " "<<cand[i][j][k] << " ";
-            }
-            cout << endl;
-        }
-    }
-}
-
 bool Sudoku::fillRow(int x) {
     vector<int>::iterator it;
     vector<int> can_fill;
@@ -212,17 +200,9 @@ bool Sudoku::fillRow(int x) {
             }
         }
         if(can_fill.size() == 0) {
-            /*
-            cout << j << " "<<x << " can_fill = 0" << endl;
-            for(int i = 0; i < cand[1][0].size();i++) {
-            	cout << cand[1][0][i] << " ";
-            }
-            cout << endl;
-            */
             return false;
         } else if(can_fill.size() == 1) {
             c = can_fill[0];
-            //cout << j<<" "<<x<<" "<<c<<"can_fill = 1" << endl;
             map[x][c] = j;
             cand[x][c].clear();
             zero_cnt--;
@@ -246,8 +226,9 @@ bool Sudoku::fillCol(int y) {
                 break;
             }
         }
-        if(have_appear)
-            continue;
+        if(have_appear) {
+        	continue;
+		}             
         for(int k = 0; k < 9; k++) {
             if(map[k][y] == 0) {
                 it = find(cand[k][y].begin(), cand[k][y].end(), j);
@@ -289,8 +270,9 @@ bool Sudoku::fillSubGrid(int x, int y) {
                 break;
             }
         }
-        if(have_appear)
-            continue;
+        if(have_appear) {
+        	continue;
+		}         
         for(int m = 0; m < 3; m++) {
             for(int n = 0; n < 3; n++) {
                 if(map[x*3+m][y*3+n] == 0) {
@@ -358,115 +340,6 @@ bool Sudoku::fillBlock() {
     return true;
 }
 
-int Sudoku::try_cand(int try_time) {
-    try_time++;
-    vector<vector<int> > temp_map = map;
-    vector<int> temp_cand[9][9];
-    for(int i = 0; i < 9; i++) {
-        for(int j = 0; j < 9; j++) {
-            temp_cand[i][j] = cand[i][j];
-        }
-    }
-    int temp_zero_cnt = zero_cnt;
-    int x, y, cand1, cand2;
-    bool find_try = false;
-    int cand1_correct, cand2_correct;
-    for(int i = 0; i < 9; i++) {
-        for(int j = 0; j < 9; j++) {
-            if(cand[i][j].size() == 2) {
-                x = i;
-                y = j;
-                cand1 = cand[i][j][0];
-                cand2 = cand[i][j][1];
-                find_try = true;
-                break;
-            }
-        }
-        if(find_try) {
-            break;
-        }
-    }
-    cand1_correct = try_fill(x, y, cand1, try_time);
-    if(cand1_correct == 1) {
-        return 1;
-    } else {
-        map = temp_map;
-        for(int i = 0; i < 9; i++) {
-            for(int j = 0; j < 9; j++) {
-                cand[i][j] = temp_cand[i][j];
-            }
-        }
-        zero_cnt = temp_zero_cnt;
-        if(try_time == 1) {
-            map[x][y] = cand2;
-            cand[x][y].clear();
-            zero_cnt--;
-            eraseSame(x, y, cand2);
-            return 0;
-        } else {
-            cand2_correct = try_fill(x, y, cand2, try_time);
-            if(cand2_correct)
-                return 1;
-            else {
-                map = temp_map;
-                for(int i = 0; i < 9; i++) {
-                    for(int j = 0; j < 9; j++) {
-                        cand[i][j] = temp_cand[i][j];
-                    }
-                }
-                zero_cnt = temp_zero_cnt;
-                return 0;
-            }
-        }
-    }
-}
-
-int Sudoku::try_fill(int x, int y, int num, int try_time) {
-    map[x][y] = num;
-    cand[x][y].clear();
-    zero_cnt--;
-    eraseSame(x, y, num);
-    if(!fillRow(x)) {
-        return 0;
-    }
-    if(!fillCol(y)) {
-        return 0;
-    }
-    if(!fillSubGrid(x, y)) {
-        return 0;
-    }
-    if(!fillBlock()) {
-        return 0;
-    }
-    int old_zero_cnt = zero_cnt;
-    while(zero_cnt) {
-        for(int i = 0; i < 9; i++) {
-            if(!fillRow(i))
-                return 0;
-        }
-        for(int i = 0; i < 9; i++) {
-            if(!fillCol(i))
-                return 0;
-        }
-        for(int i = 0; i < 3; i++) {
-            for(int j = 0; j < 3; j++) {
-                if(!fillSubGrid(i, j))
-                    return 0;
-            }
-        }
-        if(!fillBlock())
-            return 0;
-
-        if(zero_cnt == 0) {
-            return 1;
-        } else if(zero_cnt == old_zero_cnt) {
-            return try_cand(try_time);
-        } else {
-            old_zero_cnt = zero_cnt;
-        }
-    }
-}
-
 int Sudoku::try_recursive(vector<vector<int> > temp_map,
                           vector<int> temp_cand[9][9], int temp_zero_cnt) {
     int x, y, result;
@@ -496,20 +369,11 @@ int Sudoku::try_recursive(vector<vector<int> > temp_map,
         return 1;
     }
     if(temp_this_cand.size() == 0) {
-        //cout<<x<<" "<<y<<" size=0"<<endl;
         return 0;
     }
-    /*
-    cout<<"cand "<<2<<" "<<1<<" ";
-    for(int k = 0; k < temp_cand[0][4].size(); k++) {
-    	cout << temp_cand[2][1][k] << " ";
-    }
-    cout<<endl;
-    */
     int num;
     for(int k = 0; k < temp_this_cand.size(); k++) {
         num = temp_this_cand[k];
-        //cout<<x<<" "<<y<<" "<<num<<endl;
         temp_map[x][y] = num;
         temp_cand[x][y].clear();
         temp_zero_cnt--;
@@ -641,7 +505,6 @@ int Sudoku::solve() {
     }
 
     int old_zero_cnt = zero_cnt;
-    //int loop_cnt = 0, loop_not_fill = 0;
     int try_fill_result;
     while(zero_cnt) {
         for(int i = 0; i < 9; i++) {
@@ -660,17 +523,12 @@ int Sudoku::solve() {
         }
         if(!fillBlock())
             return 0;
-
         if(zero_cnt == 0) {
             return 1;
         } else if(zero_cnt == old_zero_cnt) {
             return try_recursive(map, cand, zero_cnt);
         } else {
             old_zero_cnt = zero_cnt;
-            //loop_cnt++;
-            //loop_not_fill = 0;
-            //cout << loop_cnt << " ";
         }
     }
-
 }

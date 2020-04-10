@@ -13,11 +13,9 @@ int main() {
     }
     Sudoku su(map);
     int result = su.solve();
-    //su.printdebug();
     cout << result << endl;
     if(result == 1) {
         su.printMap();
     }
-
     return 0;
 }
