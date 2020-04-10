@@ -28,8 +28,6 @@ class Sudoku {
     bool fillCol(int y);
     bool fillSubGrid(int x, int y);
     bool fillBlock();
-    bool isNineNumDiff(vector<int> be_checked);
-    bool isValid();
     bool isMultiAns();
     int try_recursive(vector<vector<int> > temp_map,
                       vector<int> temp_cand[9][9], int temp_zero_cnt);

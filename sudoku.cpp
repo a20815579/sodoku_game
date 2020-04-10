@@ -236,8 +236,8 @@ bool Sudoku::fillCol(int y) {
             }
         }
         if(have_appear) {
-        	continue;
-		}             
+            continue;
+        }
         for(int k = 0; k < 9; k++) {
             if(map[k][y] == 0) {
                 it = find(cand[k][y].begin(), cand[k][y].end(), j);
@@ -280,8 +280,8 @@ bool Sudoku::fillSubGrid(int x, int y) {
             }
         }
         if(have_appear) {
-        	continue;
-		}         
+            continue;
+        }
         for(int m = 0; m < 3; m++) {
             for(int n = 0; n < 3; n++) {
                 if(map[x*3+m][y*3+n] == 0) {
