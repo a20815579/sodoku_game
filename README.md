@@ -1,7 +1,6 @@
-# pd2-sudoku
-## Input / Output
-### Generate
-1. Output sudoku problem when execution
+# C++數獨遊戲
+## Generate
+Output sudoku problem when execution
 
 #### Example
 ```shell=
@@ -17,18 +16,18 @@ $ ./generate
 0 6 5 7 0 0 3 0 9
 ```
 
-### Transform
+## Transform
 1. input sudoku problem
 2. input transform command
 3. output transformed sudoku
 
 #### Command Format
-`0` // quit
-`1 x y` // changeNum
-`2 x y` // changeRow
-`3 x y` // changeCol
-`4 x` // clockwise rotate 90 degree `x` times
-`5 x` // 0 is up-down flip, 1 is left-right flip
+`0` // quit  
+`1 x y` // changeNum  
+`2 x y` // changeRow  
+`3 x y` // changeCol  
+`4 x` // clockwise rotate 90 degree `x` times  
+`5 x` // 0 is up-down flip, 1 is left-right   flip  
 
 #### Example
 ```shell=
@@ -62,7 +61,7 @@ $ ./transform
 0 0 0 5 6 8 0 0 0
 ```
 
-### Solve
+## Solve
 1. input sudoku problem
 2. output solved sudoku
 
